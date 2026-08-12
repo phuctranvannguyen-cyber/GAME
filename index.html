@@ -1,353 +1,2164 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYBER ARENA</title>
 
-    <title>CYBERARENA</title>
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    user-select:none;
+}
 
-    <link rel="stylesheet" href="style.css">
+body{
+    background:#02040d;
+    color:#00f7ff;
+    font-family:Consolas,monospace;
+    overflow:hidden;
+}
+
+#game{
+    width:100vw;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at center,#07132c 0%,#02040d 65%),
+        #02040d;
+}
+
+/* GRID */
+
+#game::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+        linear-gradient(rgba(0,255,255,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,255,255,.04) 1px,transparent 1px);
+    background-size:40px 40px;
+    pointer-events:none;
+}
+
+/* HEADER */
+
+#topbar{
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:10px;
+    height:70px;
+    border:1px solid #008caa;
+    background:rgba(2,7,18,.9);
+    box-shadow:0 0 20px rgba(0,255,255,.15);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    z-index:100;
+}
+
+.logo{
+    font-size:23px;
+    font-weight:bold;
+    letter-spacing:2px;
+    color:#00f7ff;
+    text-shadow:0 0 12px #00f7ff;
+}
+
+.stats{
+    display:flex;
+    gap:28px;
+    font-size:13px;
+}
+
+.stat b{
+    color:#fff;
+    font-size:16px;
+}
+
+/* ARENA */
+
+#arena{
+    position:absolute;
+    top:90px;
+    bottom:12px;
+    left:10px;
+    right:10px;
+    border:1px solid #00687c;
+    overflow:hidden;
+}
+
+/* PLAYER */
+
+.player{
+    position:absolute;
+    width:42px;
+    height:42px;
+    transform:translate(-50%,-50%);
+    z-index:20;
+}
+
+.player-body{
+    width:100%;
+    height:100%;
+    clip-path:polygon(50% 0%,100% 100%,50% 78%,0% 100%);
+    background:#00f7ff;
+    box-shadow:
+        0 0 10px #00f7ff,
+        0 0 25px #00f7ff;
+    position:relative;
+}
+
+.player-body::after{
+    content:"";
+    position:absolute;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:white;
+    left:16px;
+    top:17px;
+    box-shadow:0 0 12px white;
+}
+
+/* ENEMIES */
+
+.enemy{
+    position:absolute;
+    width:34px;
+    height:34px;
+    transform:translate(-50%,-50%);
+    z-index:10;
+}
+
+.enemy-body{
+    width:100%;
+    height:100%;
+    border:2px solid #ff287f;
+    background:#420622;
+    box-shadow:
+        0 0 8px #ff287f,
+        inset 0 0 10px #ff287f;
+    clip-path:polygon(
+        50% 0%,
+        80% 15%,
+        100% 50%,
+        80% 85%,
+        50% 100%,
+        20% 85%,
+        0% 50%,
+        20% 15%
+    );
+}
+
+.enemy-eye{
+    position:absolute;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#fff;
+    top:13px;
+    left:13px;
+    box-shadow:0 0 8px #fff;
+}
+
+/* BOSS */
+
+.boss{
+    width:82px;
+    height:82px;
+}
+
+.boss .enemy-body{
+    background:#27000c;
+    border:3px solid #ff005d;
+    box-shadow:
+        0 0 15px #ff005d,
+        0 0 35px #ff005d,
+        inset 0 0 25px #ff005d;
+    clip-path:polygon(
+        50% 0%,
+        65% 14%,
+        85% 5%,
+        82% 28%,
+        100% 50%,
+        82% 72%,
+        85% 95%,
+        62% 86%,
+        50% 100%,
+        38% 86%,
+        15% 95%,
+        18% 72%,
+        0% 50%,
+        18% 28%,
+        15% 5%,
+        35% 14%
+    );
+}
+
+.boss .enemy-eye{
+    width:18px;
+    height:18px;
+    top:31px;
+    left:32px;
+    background:#ffed00;
+    box-shadow:0 0 15px #ffed00;
+}
+
+/* HP BARS */
+
+.hp-wrap{
+    position:absolute;
+    width:42px;
+    height:5px;
+    transform:translateX(-50%);
+    background:#25030d;
+    border:1px solid #ff287f;
+    z-index:30;
+}
+
+.hp-fill{
+    height:100%;
+    width:100%;
+    background:#ff287f;
+    box-shadow:0 0 8px #ff287f;
+}
+
+.boss-hp{
+    width:120px;
+}
+
+/* BULLETS */
+
+.bullet{
+    position:absolute;
+    width:6px;
+    height:16px;
+    border-radius:5px;
+    background:#00f7ff;
+    box-shadow:0 0 10px #00f7ff;
+    z-index:15;
+}
+
+.bullet.fire{
+    background:#ff5500;
+    box-shadow:0 0 12px #ff5500;
+}
+
+.bullet.ice{
+    background:#9ffcff;
+    box-shadow:0 0 12px #9ffcff;
+}
+
+.bullet.lightning{
+    background:#fff000;
+    box-shadow:0 0 15px #fff000;
+}
+
+/* ENEMY BULLETS */
+
+.enemy-bullet{
+    position:absolute;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#ff005d;
+    box-shadow:0 0 12px #ff005d;
+    z-index:14;
+}
+
+/* DROPS */
+
+.drop{
+    position:absolute;
+    width:30px;
+    height:30px;
+    transform:translate(-50%,-50%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #fff;
+    border-radius:7px;
+    font-size:15px;
+    font-weight:bold;
+    z-index:12;
+    animation:dropGlow .8s infinite alternate;
+}
+
+@keyframes dropGlow{
+    from{box-shadow:0 0 5px currentColor}
+    to{box-shadow:0 0 20px currentColor}
+}
+
+/* EFFECT */
+
+.hit{
+    position:absolute;
+    width:35px;
+    height:35px;
+    border:2px solid #fff;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    animation:explode .35s forwards;
+    pointer-events:none;
+}
+
+@keyframes explode{
+    from{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(.3);
+    }
+    to{
+        opacity:0;
+        transform:translate(-50%,-50%) scale(2);
+    }
+}
+
+/* UI */
+
+#stageInfo{
+    position:absolute;
+    right:15px;
+    top:12px;
+    color:#ff00dd;
+    text-shadow:0 0 8px #ff00dd;
+    font-weight:bold;
+}
+
+#hpUI{
+    position:absolute;
+    top:15px;
+    left:18px;
+    z-index:100;
+}
+
+.hp-label{
+    font-size:12px;
+    margin-bottom:4px;
+}
+
+.hp-bar{
+    width:180px;
+    height:12px;
+    border:1px solid #00f7ff;
+}
+
+#playerHP{
+    height:100%;
+    width:100%;
+    background:#00f7ff;
+    box-shadow:0 0 10px #00f7ff;
+}
+
+#skills{
+    position:absolute;
+    left:18px;
+    top:55px;
+    z-index:100;
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    max-width:400px;
+}
+
+.skill{
+    padding:4px 8px;
+    border:1px solid #00f7ff;
+    color:#00f7ff;
+    background:rgba(0,20,35,.8);
+    font-size:10px;
+    box-shadow:0 0 8px rgba(0,255,255,.3);
+}
+
+/* CONTROLS */
+
+#controls{
+    position:absolute;
+    left:18px;
+    bottom:15px;
+    z-index:100;
+    width:150px;
+    height:150px;
+}
+
+.ctrl{
+    position:absolute;
+    width:48px;
+    height:48px;
+    background:rgba(0,20,35,.9);
+    border:1px solid #00f7ff;
+    color:#00f7ff;
+    font-size:20px;
+    cursor:pointer;
+    box-shadow:0 0 8px rgba(0,255,255,.25);
+}
+
+.ctrl:active{
+    background:#00f7ff;
+    color:#001018;
+}
+
+.up{left:51px;top:0}
+.left{left:0;top:51px}
+.down{left:51px;top:51px}
+.right{left:102px;top:51px}
+
+/* START SCREEN */
+
+#menu{
+    position:absolute;
+    inset:0;
+    background:rgba(1,3,10,.96);
+    z-index:500;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.menu-title{
+    font-size:52px;
+    color:#00f7ff;
+    text-shadow:
+        0 0 10px #00f7ff,
+        0 0 30px #00f7ff;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:#ff00dd;
+    margin-bottom:35px;
+}
+
+.diff-buttons{
+    display:flex;
+    gap:15px;
+}
+
+.diff{
+    padding:14px 25px;
+    border:1px solid #00f7ff;
+    background:#04101c;
+    color:#00f7ff;
+    cursor:pointer;
+    font-family:inherit;
+    transition:.2s;
+}
+
+.diff:hover{
+    background:#00f7ff;
+    color:#001018;
+    box-shadow:0 0 25px #00f7ff;
+}
+
+/* MESSAGE */
+
+#message{
+    position:absolute;
+    inset:0;
+    z-index:400;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:rgba(0,0,0,.75);
+}
+
+#message h1{
+    font-size:42px;
+    color:#ff00dd;
+    text-shadow:0 0 20px #ff00dd;
+}
+
+#message p{
+    margin:15px;
+    color:#fff;
+}
+
+#restart{
+    padding:12px 30px;
+    border:1px solid #00f7ff;
+    background:#031522;
+    color:#00f7ff;
+    font-family:inherit;
+    cursor:pointer;
+}
+
+/* PET */
+
+.pet{
+    position:absolute;
+    width:25px;
+    height:25px;
+    border:2px solid #b400ff;
+    background:#24003d;
+    clip-path:polygon(50% 0%,100% 100%,50% 75%,0 100%);
+    box-shadow:0 0 15px #b400ff;
+    z-index:18;
+}
+</style>
 </head>
 
 <body>
 
-    <!-- ==============================
-         START SCREEN
-    =============================== -->
+<div id="game">
 
-    <div id="startScreen" class="screen">
+    <div id="topbar">
+        <div class="logo">CYBER//ARENA</div>
 
-        <div class="logo">
-            CYBER<span>ARENA</span>
-        </div>
-
-        <div class="subtitle">
-            NEON BATTLE SYSTEM
-        </div>
-
-        <div class="difficulty-title">
-            CHỌN ĐỘ KHÓ
-        </div>
-
-        <div class="difficulty-buttons">
-
-            <button
-                class="difficulty-btn easy"
-                data-difficulty="easy"
-            >
-                DỄ
-                <small>×3 BOSS HP</small>
-            </button>
-
-            <button
-                class="difficulty-btn normal selected"
-                data-difficulty="normal"
-            >
-                BÌNH THƯỜNG
-                <small>×4 BOSS HP</small>
-            </button>
-
-            <button
-                class="difficulty-btn hard"
-                data-difficulty="hard"
-            >
-                KHÓ
-                <small>×5 BOSS HP</small>
-            </button>
-
-        </div>
-
-        <button id="startButton" class="start-button">
-            ▶ BẮT ĐẦU
-        </button>
-
-        <div class="controls-info">
-
-            <div>
-                <b>WASD</b> / <b>← ↑ ↓ →</b>
-                DI CHUYỂN
+        <div class="stats">
+            <div class="stat">
+                SCORE<br><b id="score">0</b>
             </div>
 
-            <div>
-                🔫 SÚNG TỰ ĐỘNG
+            <div class="stat">
+                WAVE<br><b id="wave">1</b>
             </div>
 
-            <div>
-                ⚡ NHẶT SKILL ĐỂ NÂNG CẤP
+            <div class="stat">
+                COMBO<br><b id="combo">x1</b>
             </div>
+        </div>
+    </div>
 
+    <div id="arena">
+
+        <div id="stageInfo">
+            <span id="difficultyText">BÌNH THƯỜNG</span>
+            • STAGE <span id="stage">1</span>/5
+        </div>
+
+        <div id="hpUI">
+            <div class="hp-label">
+                HP <span id="hpText">100</span>
+            </div>
+            <div class="hp-bar">
+                <div id="playerHP"></div>
+            </div>
+        </div>
+
+        <div id="skills"></div>
+
+        <div id="player" class="player">
+            <div class="player-body"></div>
+        </div>
+
+        <div id="controls">
+            <button class="ctrl up" data-key="up">▲</button>
+            <button class="ctrl left" data-key="left">◀</button>
+            <button class="ctrl down" data-key="down">▼</button>
+            <button class="ctrl right" data-key="right">▶</button>
         </div>
 
     </div>
 
+    <div id="menu">
+        <div class="menu-title">CYBER//ARENA</div>
+        <div class="subtitle">CHOOSE YOUR DIFFICULTY</div>
 
-    <!-- ==============================
-         GAME
-    =============================== -->
-
-    <div id="game" class="game hidden">
-
-        <!-- TOP HUD -->
-
-        <header class="hud">
-
-            <div class="hud-logo">
-                CYBER<span>ARENA</span>
-            </div>
-
-            <div class="hud-stat">
-                <label>SCORE</label>
-                <strong id="score">0</strong>
-            </div>
-
-            <div class="hud-stat">
-                <label>STAGE</label>
-                <strong id="stage">1/5</strong>
-            </div>
-
-            <div class="hud-stat">
-                <label>COMBO</label>
-                <strong id="combo">x1</strong>
-            </div>
-
-            <div class="hud-stat">
-                <label>DIFFICULTY</label>
-                <strong id="difficultyText">
-                    BÌNH THƯỜNG
-                </strong>
-            </div>
-
-        </header>
-
-
-        <!-- GAME INFO -->
-
-        <div class="game-info">
-
-            <div class="hp-box">
-
-                <span>HP</span>
-
-                <div class="hp-track">
-                    <div id="hpBar"></div>
-                </div>
-
-                <strong id="hpText">
-                    100 / 100
-                </strong>
-
-            </div>
-
-            <div id="stageTitle">
-                STAGE 1 / 5
-            </div>
-
-        </div>
-
-
-        <!-- ACTIVE SKILLS -->
-
-        <div class="skills-panel">
-
-            <div class="skills-title">
-                ACTIVE SKILLS
-            </div>
-
-            <div id="skillsList"></div>
-
-        </div>
-
-
-        <!-- ARENA -->
-
-        <main id="arena">
-
-            <div class="arena-grid"></div>
-
-            <div class="scan-line"></div>
-
-            <!-- BOSS BAR -->
-
-            <div
-                id="bossContainer"
-                class="boss-container hidden"
-            >
-
-                <div class="boss-name">
-                    ☠ CYBER DEMON
-                </div>
-
-                <div class="boss-hp-track">
-                    <div id="bossHp"></div>
-                </div>
-
-            </div>
-
-            <!-- PLAYER -->
-
-            <div id="player">
-
-                <div class="player-wing left"></div>
-                <div class="player-wing right"></div>
-
-                <div class="player-core"></div>
-
-                <div class="player-cockpit"></div>
-
-                <div class="engine engine-left"></div>
-                <div class="engine engine-right"></div>
-
-            </div>
-
-            <!-- PET -->
-
-            <div
-                id="pet"
-                class="pet hidden"
-            >
-                <div class="pet-eye left"></div>
-                <div class="pet-eye right"></div>
-                <div class="pet-core"></div>
-            </div>
-
-            <!-- EFFECT LAYER -->
-
-            <div id="effects"></div>
-
-        </main>
-
-
-        <!-- MOBILE CONTROLS -->
-
-        <div class="movement-controls">
-
-            <button
-                class="move-btn up"
-                data-key="arrowup"
-            >
-                ▲
+        <div class="diff-buttons">
+            <button class="diff" data-diff="easy">
+                EASY
             </button>
 
-            <button
-                class="move-btn left"
-                data-key="arrowleft"
-            >
-                ◀
+            <button class="diff" data-diff="normal">
+                NORMAL
             </button>
 
-            <button
-                class="move-btn down"
-                data-key="arrowdown"
-            >
-                ▼
+            <button class="diff" data-diff="hard">
+                HARD
             </button>
-
-            <button
-                class="move-btn right"
-                data-key="arrowright"
-            >
-                ▶
-            </button>
-
         </div>
-
-
-        <!-- AUTO FIRE INDICATOR -->
-
-        <div class="auto-fire">
-            <span class="fire-dot"></span>
-            AUTO FIRE
-        </div>
-
     </div>
 
-
-    <!-- ==============================
-         MESSAGE
-    =============================== -->
-
-    <div
-        id="message"
-        class="message hidden"
-    ></div>
-
-
-    <!-- ==============================
-         GAME OVER
-    =============================== -->
-
-    <div
-        id="gameOver"
-        class="result-screen hidden"
-    >
-
-        <div class="result-box">
-
-            <div class="result-title danger">
-                SYSTEM FAILURE
-            </div>
-
-            <div class="result-score">
-                SCORE
-                <strong id="finalScore">
-                    0
-                </strong>
-            </div>
-
-            <button
-                class="restart-button"
-                onclick="location.reload()"
-            >
-                ↻ CHƠI LẠI
-            </button>
-
-        </div>
-
+    <div id="message">
+        <h1 id="messageTitle"></h1>
+        <p id="messageText"></p>
+        <button id="restart">CHƠI LẠI</button>
     </div>
 
+</div>
 
-    <!-- ==============================
-         VICTORY
-    =============================== -->
+<script>
 
-    <div
-        id="victory"
-        class="result-screen hidden"
-    >
+/* =========================================================
+   CYBER ARENA
+   GAME ENGINE
+========================================================= */
 
-        <div class="result-box victory-box">
+const arena = document.getElementById("arena");
+const playerEl = document.getElementById("player");
 
-            <div class="result-title">
-                ★ VICTORY ★
-            </div>
+const scoreEl = document.getElementById("score");
+const waveEl = document.getElementById("wave");
+const comboEl = document.getElementById("combo");
 
-            <div class="victory-text">
-                CYBERARENA CLEARED
-            </div>
+const stageEl = document.getElementById("stage");
+const difficultyText = document.getElementById("difficultyText");
 
-            <div class="result-score">
-                FINAL SCORE
-                <strong id="victoryScore">
-                    0
-                </strong>
-            </div>
+const hpBar = document.getElementById("playerHP");
+const hpText = document.getElementById("hpText");
 
-            <button
-                class="restart-button"
-                onclick="location.reload()"
-            >
-                ↻ CHƠI LẠI
-            </button>
+const skillsEl = document.getElementById("skills");
 
-        </div>
+const menu = document.getElementById("menu");
+const message = document.getElementById("message");
+const messageTitle = document.getElementById("messageTitle");
+const messageText = document.getElementById("messageText");
 
-    </div>
+let gameRunning = false;
 
+let difficulty = "normal";
+let stage = 1;
 
-    <script src="script.js"></script>
+let score = 0;
+let combo = 1;
+
+let player = {
+    x:0,
+    y:0,
+    hp:100,
+    maxHp:100,
+    speed:4.5,
+    damage:20,
+    fireRate:450,
+    lastShot:0,
+    invincible:0
+};
+
+let enemies = [];
+let bullets = [];
+let enemyBullets = [];
+let drops = [];
+let effects = [];
+
+let pet = null;
+
+let keys = {
+    up:false,
+    down:false,
+    left:false,
+    right:false
+};
+
+let stageKills = 0;
+let targetKills = 0;
+let spawnTimer = 0;
+let stageClearing = false;
+
+/* =========================================================
+   DIFFICULTY
+========================================================= */
+
+const difficultyData = {
+
+    easy:{
+        name:"DỄ",
+        enemyHp:35,
+        enemySpeed:0.75,
+        enemyDamage:5,
+        spawnRate:950,
+        bossMultiplier:3,
+        dropBonus:1.15
+    },
+
+    normal:{
+        name:"BÌNH THƯỜNG",
+        enemyHp:50,
+        enemySpeed:0.95,
+        enemyDamage:7,
+        spawnRate:850,
+        bossMultiplier:4,
+        dropBonus:1.30
+    },
+
+    hard:{
+        name:"KHÓ",
+        enemyHp:70,
+        enemySpeed:1.15,
+        enemyDamage:10,
+        spawnRate:720,
+        bossMultiplier:5,
+        dropBonus:1.45
+    }
+
+};
+
+/* =========================================================
+   SKILLS
+========================================================= */
+
+const skills = {
+
+    bomb:{
+        name:"💣 BOMB",
+        chance:10
+    },
+
+    missile:{
+        name:"🚀 MISSILE",
+        chance:10
+    },
+
+    clear:{
+        name:"☢ CLEAR",
+        chance:5
+    },
+
+    speed:{
+        name:"⚡ SPEED",
+        chance:15
+    },
+
+    rapid:{
+        name:"🔥 RAPID",
+        chance:20
+    },
+
+    triple:{
+        name:"🔱 3 BULLET",
+        chance:15
+    },
+
+    ultra:{
+        name:"☄ ULTRA GUN",
+        chance:10
+    },
+
+    elemental:{
+        name:"🌩 ELEMENT",
+        chance:25
+    }
+
+};
+
+/* =========================================================
+   START
+========================================================= */
+
+document.querySelectorAll(".diff").forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        difficulty = button.dataset.diff;
+
+        startGame();
+
+    });
+
+});
+
+function startGame(){
+
+    menu.style.display="none";
+    message.style.display="none";
+
+    score=0;
+    combo=1;
+
+    stage=1;
+
+    player.hp=100;
+    player.maxHp=100;
+
+    player.speed=4.5;
+    player.damage=20;
+    player.fireRate=450;
+
+    enemies=[];
+    bullets=[];
+    enemyBullets=[];
+    drops=[];
+    effects=[];
+
+    pet=null;
+
+    stageKills=0;
+    stageClearing=false;
+
+    difficultyText.textContent=
+        difficultyData[difficulty].name;
+
+    updateUI();
+
+    resetPlayer();
+
+    startStage();
+
+    gameRunning=true;
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+/* =========================================================
+   STAGE
+========================================================= */
+
+function startStage(){
+
+    stageKills=0;
+    stageClearing=false;
+
+    targetKills = stage === 5 ? 8 : 10 + stage * 3;
+
+    stageEl.textContent=stage;
+
+    enemies.forEach(e=>e.el.remove());
+
+    enemies=[];
+
+    bullets.forEach(b=>b.el.remove());
+
+    bullets=[];
+
+    enemyBullets.forEach(b=>b.el.remove());
+
+    enemyBullets=[];
+
+    drops.forEach(d=>d.el.remove());
+
+    drops=[];
+
+    /*
+       Màn càng cao:
+       - quái nhiều hơn
+       - tốc độ cao hơn
+       - tỉ lệ drop cao hơn
+    */
+
+    spawnTimer=0;
+
+}
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+function resetPlayer(){
+
+    player.x=arena.clientWidth/2;
+    player.y=arena.clientHeight-120;
+
+    renderPlayer();
+
+}
+
+function renderPlayer(){
+
+    playerEl.style.left=player.x+"px";
+    playerEl.style.top=player.y+"px";
+
+}
+
+function movePlayer(){
+
+    if(!gameRunning) return;
+
+    if(keys.up)
+        player.y-=player.speed;
+
+    if(keys.down)
+        player.y+=player.speed;
+
+    if(keys.left)
+        player.x-=player.speed;
+
+    if(keys.right)
+        player.x+=player.speed;
+
+    const w=arena.clientWidth;
+    const h=arena.clientHeight;
+
+    player.x=Math.max(25,Math.min(w-25,player.x));
+    player.y=Math.max(80,Math.min(h-25,player.y));
+
+    renderPlayer();
+
+}
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener("keydown",e=>{
+
+    if(e.key==="ArrowUp" || e.key.toLowerCase()==="w")
+        keys.up=true;
+
+    if(e.key==="ArrowDown" || e.key.toLowerCase()==="s")
+        keys.down=true;
+
+    if(e.key==="ArrowLeft" || e.key.toLowerCase()==="a")
+        keys.left=true;
+
+    if(e.key==="ArrowRight" || e.key.toLowerCase()==="d")
+        keys.right=true;
+
+});
+
+document.addEventListener("keyup",e=>{
+
+    if(e.key==="ArrowUp" || e.key.toLowerCase()==="w")
+        keys.up=false;
+
+    if(e.key==="ArrowDown" || e.key.toLowerCase()==="s")
+        keys.down=false;
+
+    if(e.key==="ArrowLeft" || e.key.toLowerCase()==="a")
+        keys.left=false;
+
+    if(e.key==="ArrowRight" || e.key.toLowerCase()==="d")
+        keys.right=false;
+
+});
+
+/* MOBILE / BUTTON */
+
+document.querySelectorAll(".ctrl").forEach(btn=>{
+
+    const key=btn.dataset.key;
+
+    btn.addEventListener("mousedown",()=>{
+        keys[key]=true;
+    });
+
+    btn.addEventListener("mouseup",()=>{
+        keys[key]=false;
+    });
+
+    btn.addEventListener("mouseleave",()=>{
+        keys[key]=false;
+    });
+
+    btn.addEventListener("touchstart",e=>{
+        e.preventDefault();
+        keys[key]=true;
+    });
+
+    btn.addEventListener("touchend",e=>{
+        e.preventDefault();
+        keys[key]=false;
+    });
+
+});
+
+/* =========================================================
+   ENEMY SPAWN
+========================================================= */
+
+function spawnEnemy(){
+
+    if(stage===5 && enemies.some(e=>e.boss))
+        return;
+
+    const data=difficultyData[difficulty];
+
+    const enemy={
+
+        x:Math.random()*arena.clientWidth,
+
+        y:90+Math.random()*150,
+
+        hp:data.enemyHp,
+
+        maxHp:data.enemyHp,
+
+        speed:
+            data.enemySpeed+
+            stage*0.10,
+
+        damage:data.enemyDamage,
+
+        boss:false,
+
+        el:null,
+
+        hpEl:null,
+
+        lastAttack:0,
+
+        attackCooldown:
+            900+
+            Math.random()*700
+
+    };
+
+    createEnemyElement(enemy);
+
+    enemies.push(enemy);
+
+}
+
+/* =========================================================
+   BOSS
+========================================================= */
+
+function spawnBoss(){
+
+    const data=difficultyData[difficulty];
+
+    const bossHp=
+        data.enemyHp*
+        data.bossMultiplier*
+        (1+stage*0.1);
+
+    const boss={
+
+        x:arena.clientWidth/2,
+
+        y:130,
+
+        hp:bossHp,
+
+        maxHp:bossHp,
+
+        speed:data.enemySpeed*0.65,
+
+        damage:data.enemyDamage*1.8,
+
+        boss:true,
+
+        el:null,
+
+        hpEl:null,
+
+        lastAttack:0,
+
+        attackCooldown:700
+
+    };
+
+    createEnemyElement(boss);
+
+    enemies.push(boss);
+
+}
+
+/* =========================================================
+   CREATE ENEMY
+========================================================= */
+
+function createEnemyElement(enemy){
+
+    const el=document.createElement("div");
+
+    el.className=
+        enemy.boss
+        ?"enemy boss"
+        :"enemy";
+
+    const body=document.createElement("div");
+
+    body.className="enemy-body";
+
+    const eye=document.createElement("div");
+
+    eye.className="enemy-eye";
+
+    body.appendChild(eye);
+
+    el.appendChild(body);
+
+    arena.appendChild(el);
+
+    enemy.el=el;
+
+    const hpWrap=document.createElement("div");
+
+    hpWrap.className=
+        enemy.boss
+        ?"hp-wrap boss-hp"
+        :"hp-wrap";
+
+    const hpFill=document.createElement("div");
+
+    hpFill.className="hp-fill";
+
+    hpWrap.appendChild(hpFill);
+
+    arena.appendChild(hpWrap);
+
+    enemy.hpEl=hpWrap;
+
+    renderEnemy(enemy);
+
+}
+
+/* =========================================================
+   ENEMY AI
+========================================================= */
+
+function updateEnemies(){
+
+    const now=Date.now();
+
+    enemies.forEach(enemy=>{
+
+        /*
+         * ĐÂY LÀ PHẦN QUAN TRỌNG:
+         *
+         * Quái luôn tính hướng từ vị trí hiện tại
+         * tới nhân vật.
+         *
+         * Vì vậy quái không đứng yên.
+         */
+
+        const dx=player.x-enemy.x;
+        const dy=player.y-enemy.y;
+
+        const distance=Math.sqrt(dx*dx+dy*dy);
+
+        if(distance>42){
+
+            enemy.x +=
+                dx/distance*
+                enemy.speed;
+
+            enemy.y +=
+                dy/distance*
+                enemy.speed;
+
+        }else{
+
+            /*
+             * Khi quái áp sát nhân vật,
+             * nó gây sát thương.
+             */
+
+            if(now-enemy.lastAttack>
+                enemy.attackCooldown){
+
+                damagePlayer(enemy.damage);
+
+                enemy.lastAttack=now;
+
+            }
+
+        }
+
+        /*
+         * Boss bắn đạn về phía người chơi
+         */
+
+        if(enemy.boss &&
+           now-enemy.lastAttack>enemy.attackCooldown){
+
+            enemyShoot(enemy);
+
+            enemy.lastAttack=now;
+
+        }
+
+        renderEnemy(enemy);
+
+    });
+
+}
+
+/* =========================================================
+   RENDER ENEMY
+========================================================= */
+
+function renderEnemy(enemy){
+
+    enemy.el.style.left=enemy.x+"px";
+    enemy.el.style.top=enemy.y+"px";
+
+    enemy.hpEl.style.left=enemy.x+"px";
+    enemy.hpEl.style.top=
+        (enemy.y-
+        (enemy.boss?55:28))+"px";
+
+    const hpPercent=
+        Math.max(0,enemy.hp/enemy.maxHp*100);
+
+    enemy.hpEl.firstChild.style.width=
+        hpPercent+"%";
+
+}
+
+/* =========================================================
+   ENEMY SHOOT
+========================================================= */
+
+function enemyShoot(enemy){
+
+    const dx=player.x-enemy.x;
+    const dy=player.y-enemy.y;
+
+    const distance=Math.sqrt(dx*dx+dy*dy);
+
+    const bullet={
+
+        x:enemy.x,
+        y:enemy.y,
+
+        vx:dx/distance*3.2,
+        vy:dy/distance*3.2,
+
+        damage:enemy.damage*0.7,
+
+        el:null
+
+    };
+
+    const el=document.createElement("div");
+
+    el.className="enemy-bullet";
+
+    arena.appendChild(el);
+
+    bullet.el=el;
+
+    enemyBullets.push(bullet);
+
+}
+
+/* =========================================================
+   PLAYER AUTO SHOOT
+========================================================= */
+
+function autoShoot(){
+
+    const now=Date.now();
+
+    if(now-player.lastShot<player.fireRate)
+        return;
+
+    player.lastShot=now;
+
+    /*
+     * Tìm kẻ địch gần nhất
+     */
+
+    let target=null;
+    let nearest=Infinity;
+
+    enemies.forEach(enemy=>{
+
+        const dx=enemy.x-player.x;
+        const dy=enemy.y-player.y;
+
+        const distance=Math.sqrt(dx*dx+dy*dy);
+
+        if(distance<nearest){
+
+            nearest=distance;
+            target=enemy;
+
+        }
+
+    });
+
+    if(!target)
+        return;
+
+    const dx=target.x-player.x;
+    const dy=target.y-player.y;
+
+    const distance=Math.sqrt(dx*dx+dy*dy);
+
+    const vx=dx/distance*8;
+    const vy=dy/distance*8;
+
+    /*
+     * 3 đường đạn
+     */
+
+    if(player.triple){
+
+        createBullet(vx,vy,0);
+        createBullet(vx,vy,-0.35);
+        createBullet(vx,vy,0.35);
+
+    }else{
+
+        createBullet(vx,vy,0);
+
+    }
+
+}
+
+/* =========================================================
+   BULLET
+========================================================= */
+
+function createBullet(vx,vy,angle){
+
+    const bullet={
+
+        x:player.x,
+        y:player.y,
+
+        vx:vx,
+        vy:vy,
+
+        damage:player.damage,
+
+        type:player.element||
+
+             "normal",
+
+        el:null
+
+    };
+
+    const el=document.createElement("div");
+
+    el.className="bullet";
+
+    if(bullet.type==="fire")
+        el.classList.add("fire");
+
+    if(bullet.type==="ice")
+        el.classList.add("ice");
+
+    if(bullet.type==="lightning")
+        el.classList.add("lightning");
+
+    arena.appendChild(el);
+
+    bullet.el=el;
+
+    bullets.push(bullet);
+
+}
+
+/* =========================================================
+   UPDATE BULLETS
+========================================================= */
+
+function updateBullets(){
+
+    bullets.forEach((bullet,index)=>{
+
+        bullet.x+=bullet.vx;
+        bullet.y+=bullet.vy;
+
+        bullet.el.style.left=bullet.x+"px";
+        bullet.el.style.top=bullet.y+"px";
+
+        let hit=false;
+
+        enemies.forEach(enemy=>{
+
+            if(hit) return;
+
+            const dx=enemy.x-bullet.x;
+            const dy=enemy.y-bullet.y;
+
+            const distance=
+                Math.sqrt(dx*dx+dy*dy);
+
+            if(distance<
+                (enemy.boss?45:24)){
+
+                damageEnemy(
+                    enemy,
+                    bullet.damage
+                );
+
+                hit=true;
+
+            }
+
+        });
+
+        if(hit ||
+           bullet.x<0 ||
+           bullet.x>arena.clientWidth ||
+           bullet.y<0 ||
+           bullet.y>arena.clientHeight){
+
+            bullet.el.remove();
+
+            bullets.splice(index,1);
+
+        }
+
+    });
+
+}
+
+/* =========================================================
+   DAMAGE ENEMY
+========================================================= */
+
+function damageEnemy(enemy,damage){
+
+    /*
+     * Sấm sét / lửa / băng
+     * gây thêm sát thương.
+     */
+
+    if(player.element)
+        damage*=1.25;
+
+    enemy.hp-=damage;
+
+    createHit(enemy.x,enemy.y);
+
+    if(enemy.hp<=0){
+
+        killEnemy(enemy);
+
+    }
+
+}
+
+/* =========================================================
+   KILL ENEMY
+========================================================= */
+
+function killEnemy(enemy){
+
+    if(!enemies.includes(enemy))
+        return;
+
+    enemy.el.remove();
+    enemy.hpEl.remove();
+
+    enemies=
+        enemies.filter(e=>e!==enemy);
+
+    stageKills++;
+
+    score+=
+        enemy.boss
+        ?1000*stage
+        :100*stage;
+
+    combo=Math.min(combo+1,99);
+
+    updateUI();
+
+    /*
+     * Boss
+     */
+
+    if(enemy.boss){
+
+        bossDefeated();
+
+    }else{
+
+        /*
+         * Tăng nhẹ tỉ lệ drop theo màn.
+         */
+
+        tryDrop(enemy);
+
+    }
+
+}
+
+/* =========================================================
+   DROP SYSTEM
+========================================================= */
+
+function tryDrop(enemy){
+
+    const data=difficultyData[difficulty];
+
+    /*
+     * Tỉ lệ cơ bản được giữ vừa phải.
+     *
+     * Màn càng cao -> tăng nhẹ.
+     */
+
+    const baseChance=
+        0.16+
+        stage*0.025;
+
+    const finalChance=
+        baseChance*
+        data.dropBonus;
+
+    if(Math.random()>finalChance)
+        return;
+
+    const roll=Math.random()*100;
+
+    let accumulated=0;
+
+    let selected=null;
+
+    for(const key in skills){
+
+        accumulated+=skills[key].chance;
+
+        if(roll<=accumulated){
+
+            selected=key;
+            break;
+
+        }
+
+    }
+
+    if(selected)
+        createDrop(enemy.x,enemy.y,selected);
+
+}
+
+/* =========================================================
+   CREATE DROP
+========================================================= */
+
+function createDrop(x,y,type){
+
+    const drop={
+
+        x:x,
+        y:y,
+
+        type:type,
+
+        el:null
+
+    };
+
+    const el=document.createElement("div");
+
+    el.className="drop";
+
+    el.textContent=
+        skills[type].name.split(" ")[0];
+
+    el.style.color=
+        type==="elemental"
+        ?"orange"
+        :"#00f7ff";
+
+    arena.appendChild(el);
+
+    drop.el=el;
+
+    drops.push(drop);
+
+}
+
+/* =========================================================
+   UPDATE DROPS
+========================================================= */
+
+function updateDrops(){
+
+    drops.forEach((drop,index)=>{
+
+        drop.el.style.left=drop.x+"px";
+        drop.el.style.top=drop.y+"px";
+
+        const dx=
+            player.x-drop.x;
+
+        const dy=
+            player.y-drop.y;
+
+        const distance=
+            Math.sqrt(dx*dx+dy*dy);
+
+        if(distance<35){
+
+            collectDrop(drop);
+
+            drop.el.remove();
+
+            drops.splice(index,1);
+
+        }
+
+    });
+
+}
+
+/* =========================================================
+   COLLECT SKILL
+========================================================= */
+
+function collectDrop(drop){
+
+    const type=drop.type;
+
+    if(type==="bomb"){
+
+        enemies.forEach(enemy=>{
+
+            enemy.hp-=
+                enemy.maxHp*0.35;
+
+        });
+
+        createSkillText("💣 BOMB!");
+
+    }
+
+    if(type==="missile"){
+
+        /*
+         * Missile tiêu diệt một kẻ địch mạnh nhất.
+         */
+
+        let strongest=null;
+
+        enemies.forEach(enemy=>{
+
+            if(!strongest ||
+               enemy.hp>strongest.hp){
+
+                strongest=enemy;
+
+            }
+
+        });
+
+        if(strongest)
+            strongest.hp-=
+                strongest.maxHp*0.55;
+
+        createSkillText("🚀 MISSILE!");
+
+    }
+
+    if(type==="clear"){
+
+        /*
+         * Quét sạch quái thường.
+         * Boss không bị xóa.
+         */
+
+        enemies
+            .filter(e=>!e.boss)
+            .forEach(e=>killEnemy(e));
+
+        createSkillText("☢ CLEAR!");
+
+    }
+
+    if(type==="speed"){
+
+        player.speed+=2;
+
+        addSkill("⚡ SPEED +");
+
+    }
+
+    if(type==="rapid"){
+
+        player.fireRate=
+            Math.max(150,
+                player.fireRate*0.72);
+
+        addSkill("🔥 RAPID");
+
+    }
+
+    if(type==="triple"){
+
+        player.triple=true;
+
+        addSkill("🔱 3 BULLET");
+
+    }
+
+    if(type==="ultra"){
+
+        player.damage*=1.8;
+
+        player.fireRate=
+            Math.max(120,
+                player.fireRate*0.8);
+
+        addSkill("☄ ULTRA GUN");
+
+    }
+
+    if(type==="elemental"){
+
+        const elements=[
+            "fire",
+            "ice",
+            "lightning"
+        ];
+
+        player.element=
+            elements[
+                Math.floor(
+                    Math.random()*3
+                )
+            ];
+
+        player.damage*=1.3;
+
+        addSkill(
+            player.element==="fire"
+            ?"🔥 FIRE"
+            :
+            player.element==="ice"
+            ?"❄ ICE"
+            :"🌩 LIGHTNING"
+        );
+
+    }
+
+}
+
+/* =========================================================
+   SKILL UI
+========================================================= */
+
+function addSkill(name){
+
+    const el=document.createElement("div");
+
+    el.className="skill";
+
+    el.textContent=name;
+
+    skillsEl.appendChild(el);
+
+}
+
+function createSkillText(text){
+
+    addSkill(text);
+
+}
+
+/* =========================================================
+   PLAYER DAMAGE
+========================================================= */
+
+function damagePlayer(amount){
+
+    if(Date.now()<player.invincible)
+        return;
+
+    player.hp-=amount;
+
+    player.invincible=
+        Date.now()+400;
+
+    combo=1;
+
+    updateUI();
+
+    /*
+     * Nếu HP hết -> game over.
+     */
+
+    if(player.hp<=0){
+
+        player.hp=0;
+
+        gameOver();
+
+    }
+
+}
+
+/* =========================================================
+   PET
+========================================================= */
+
+function createPet(){
+
+    if(pet)
+        return;
+
+    pet={
+
+        x:player.x-55,
+
+        y:player.y,
+
+        damage:player.damage,
+
+        lastShot:0,
+
+        el:null
+
+    };
+
+    const el=document.createElement("div");
+
+    el.className="pet";
+
+    arena.appendChild(el);
+
+    pet.el=el;
+
+    addSkill("👾 PET ONLINE");
+
+}
+
+/* =========================================================
+   PET AI
+========================================================= */
+
+function updatePet(){
+
+    if(!pet)
+        return;
+
+    /*
+     * Pet bay quanh nhân vật.
+     */
+
+    pet.x=
+        player.x-55;
+
+    pet.y=
+        player.y+Math.sin(Date.now()/250)*25;
+
+    pet.el.style.left=pet.x+"px";
+    pet.el.style.top=pet.y+"px";
+
+    /*
+     * Pet tự bắn.
+     */
+
+    if(Date.now()-pet.lastShot<700)
+        return;
+
+    let target=null;
+    let nearest=Infinity;
+
+    enemies.forEach(enemy=>{
+
+        const dx=enemy.x-pet.x;
+        const dy=enemy.y-pet.y;
+
+        const d=Math.sqrt(dx*dx+dy*dy);
+
+        if(d<nearest){
+
+            nearest=d;
+            target=enemy;
+
+        }
+
+    });
+
+    if(target){
+
+        pet.lastShot=Date.now();
+
+        target.hp-=
+            pet.damage*0.7;
+
+        createHit(target.x,target.y);
+
+        if(target.hp<=0)
+            killEnemy(target);
+
+    }
+
+}
+
+/* =========================================================
+   BOSS DEFEATED
+========================================================= */
+
+function bossDefeated(){
+
+    /*
+     * Easy + Normal:
+     * nhận pet.
+     */
+
+    if(
+        difficulty==="easy" ||
+        difficulty==="normal"
+    ){
+
+        createPet();
+
+    }
+
+    /*
+     * Hard không được pet,
+     * thay vào đó hồi máu.
+     */
+
+    if(difficulty==="hard"){
+
+        player.hp=
+            Math.min(
+                player.maxHp,
+                player.hp+40
+            );
+
+        addSkill("💀 BOSS REWARD");
+
+    }
+
+    /*
+     * Hoàn thành màn.
+     */
+
+    setTimeout(()=>{
+
+        if(stage<5){
+
+            stage++;
+
+            startStage();
+
+        }else{
+
+            victory();
+
+        }
+
+    },1800);
+
+}
+
+/* =========================================================
+   SPAWN LOGIC
+========================================================= */
+
+function spawnLogic(){
+
+    if(stageClearing)
+        return;
+
+    /*
+     * Màn 5:
+     * boss xuất hiện sau khi đủ quái.
+     */
+
+    if(stage===5){
+
+        if(stageKills>=targetKills &&
+           enemies.length===0){
+
+            spawnBoss();
+
+            stageClearing=true;
+
+        }
+
+        return;
+
+    }
+
+    /*
+     * Các màn thường.
+     */
+
+    if(stageKills>=targetKills){
+
+        if(enemies.length===0){
+
+            stage++;
+
+            startStage();
+
+        }
+
+        return;
+
+    }
+
+    const data=difficultyData[difficulty];
+
+    if(Date.now()-spawnTimer>
+        data.spawnRate){
+
+        spawnEnemy();
+
+        spawnTimer=Date.now();
+
+    }
+
+}
+
+/* =========================================================
+   ENEMY BULLETS
+========================================================= */
+
+function updateEnemyBullets(){
+
+    enemyBullets.forEach((bullet,index)=>{
+
+        bullet.x+=bullet.vx;
+        bullet.y+=bullet.vy;
+
+        bullet.el.style.left=
+            bullet.x+"px";
+
+        bullet.el.style.top=
+            bullet.y+"px";
+
+        const dx=
+            bullet.x-player.x;
+
+        const dy=
+            bullet.y-player.y;
+
+        const distance=
+            Math.sqrt(dx*dx+dy*dy);
+
+        if(distance<22){
+
+            damagePlayer(
+                bullet.damage
+            );
+
+            bullet.el.remove();
+
+            enemyBullets.splice(index,1);
+
+            return;
+
+        }
+
+        if(
+            bullet.x<0 ||
+            bullet.x>arena.clientWidth ||
+            bullet.y<0 ||
+            bullet.y>arena.clientHeight
+        ){
+
+            bullet.el.remove();
+
+            enemyBullets.splice(index,1);
+
+        }
+
+    });
+
+}
+
+/* =========================================================
+   EFFECT
+========================================================= */
+
+function createHit(x,y){
+
+    const el=document.createElement("div");
+
+    el.className="hit";
+
+    el.style.left=x+"px";
+    el.style.top=y+"px";
+
+    arena.appendChild(el);
+
+    setTimeout(()=>{
+        el.remove();
+    },350);
+
+}
+
+/* =========================================================
+   UI
+========================================================= */
+
+function updateUI(){
+
+    scoreEl.textContent=score;
+
+    waveEl.textContent=stage;
+
+    comboEl.textContent="x"+combo;
+
+    hpText.textContent=
+        Math.ceil(player.hp);
+
+    hpBar.style.width=
+        (player.hp/player.maxHp*100)+"%";
+
+}
+
+/* =========================================================
+   GAME OVER
+========================================================= */
+
+function gameOver(){
+
+    gameRunning=false;
+
+    message.style.display="flex";
+
+    messageTitle.textContent=
+        "SYSTEM FAILURE";
+
+    messageText.textContent=
+        "Bạn đã bị hạ gục • SCORE: "+score;
+
+}
+
+/* =========================================================
+   VICTORY
+========================================================= */
+
+function victory(){
+
+    gameRunning=false;
+
+    message.style.display="flex";
+
+    messageTitle.textContent=
+        "CYBER VICTORY";
+
+    messageText.textContent=
+        "Bạn đã hoàn thành toàn bộ 5 màn • SCORE: "+score;
+
+}
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+document.getElementById("restart")
+.addEventListener("click",()=>{
+
+    message.style.display="none";
+
+    startGame();
+
+});
+
+/* =========================================================
+   GAME LOOP
+========================================================= */
+
+function gameLoop(){
+
+    if(!gameRunning)
+        return;
+
+    movePlayer();
+
+    spawnLogic();
+
+    autoShoot();
+
+    updateBullets();
+
+    updateEnemies();
+
+    updateEnemyBullets();
+
+    updateDrops();
+
+    updatePet();
+
+    updateUI();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+</script>
 
 </body>
 </html>
