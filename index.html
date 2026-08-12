@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CYBERARENA</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ==============================
+         START SCREEN
+    =============================== -->
+
+    <div id="startScreen" class="screen">
+
+        <div class="logo">
+            CYBER<span>ARENA</span>
+        </div>
+
+        <div class="subtitle">
+            NEON BATTLE SYSTEM
+        </div>
+
+        <div class="difficulty-title">
+            CHỌN ĐỘ KHÓ
+        </div>
+
+        <div class="difficulty-buttons">
+
+            <button
+                class="difficulty-btn easy"
+                data-difficulty="easy"
+            >
+                DỄ
+                <small>×3 BOSS HP</small>
+            </button>
+
+            <button
+                class="difficulty-btn normal selected"
+                data-difficulty="normal"
+            >
+                BÌNH THƯỜNG
+                <small>×4 BOSS HP</small>
+            </button>
+
+            <button
+                class="difficulty-btn hard"
+                data-difficulty="hard"
+            >
+                KHÓ
+                <small>×5 BOSS HP</small>
+            </button>
+
+        </div>
+
+        <button id="startButton" class="start-button">
+            ▶ BẮT ĐẦU
+        </button>
+
+        <div class="controls-info">
+
+            <div>
+                <b>WASD</b> / <b>← ↑ ↓ →</b>
+                DI CHUYỂN
+            </div>
+
+            <div>
+                🔫 SÚNG TỰ ĐỘNG
+            </div>
+
+            <div>
+                ⚡ NHẶT SKILL ĐỂ NÂNG CẤP
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         GAME
+    =============================== -->
+
+    <div id="game" class="game hidden">
+
+        <!-- TOP HUD -->
+
+        <header class="hud">
+
+            <div class="hud-logo">
+                CYBER<span>ARENA</span>
+            </div>
+
+            <div class="hud-stat">
+                <label>SCORE</label>
+                <strong id="score">0</strong>
+            </div>
+
+            <div class="hud-stat">
+                <label>STAGE</label>
+                <strong id="stage">1/5</strong>
+            </div>
+
+            <div class="hud-stat">
+                <label>COMBO</label>
+                <strong id="combo">x1</strong>
+            </div>
+
+            <div class="hud-stat">
+                <label>DIFFICULTY</label>
+                <strong id="difficultyText">
+                    BÌNH THƯỜNG
+                </strong>
+            </div>
+
+        </header>
+
+
+        <!-- GAME INFO -->
+
+        <div class="game-info">
+
+            <div class="hp-box">
+
+                <span>HP</span>
+
+                <div class="hp-track">
+                    <div id="hpBar"></div>
+                </div>
+
+                <strong id="hpText">
+                    100 / 100
+                </strong>
+
+            </div>
+
+            <div id="stageTitle">
+                STAGE 1 / 5
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE SKILLS -->
+
+        <div class="skills-panel">
+
+            <div class="skills-title">
+                ACTIVE SKILLS
+            </div>
+
+            <div id="skillsList"></div>
+
+        </div>
+
+
+        <!-- ARENA -->
+
+        <main id="arena">
+
+            <div class="arena-grid"></div>
+
+            <div class="scan-line"></div>
+
+            <!-- BOSS BAR -->
+
+            <div
+                id="bossContainer"
+                class="boss-container hidden"
+            >
+
+                <div class="boss-name">
+                    ☠ CYBER DEMON
+                </div>
+
+                <div class="boss-hp-track">
+                    <div id="bossHp"></div>
+                </div>
+
+            </div>
+
+            <!-- PLAYER -->
+
+            <div id="player">
+
+                <div class="player-wing left"></div>
+                <div class="player-wing right"></div>
+
+                <div class="player-core"></div>
+
+                <div class="player-cockpit"></div>
+
+                <div class="engine engine-left"></div>
+                <div class="engine engine-right"></div>
+
+            </div>
+
+            <!-- PET -->
+
+            <div
+                id="pet"
+                class="pet hidden"
+            >
+                <div class="pet-eye left"></div>
+                <div class="pet-eye right"></div>
+                <div class="pet-core"></div>
+            </div>
+
+            <!-- EFFECT LAYER -->
+
+            <div id="effects"></div>
+
+        </main>
+
+
+        <!-- MOBILE CONTROLS -->
+
+        <div class="movement-controls">
+
+            <button
+                class="move-btn up"
+                data-key="arrowup"
+            >
+                ▲
+            </button>
+
+            <button
+                class="move-btn left"
+                data-key="arrowleft"
+            >
+                ◀
+            </button>
+
+            <button
+                class="move-btn down"
+                data-key="arrowdown"
+            >
+                ▼
+            </button>
+
+            <button
+                class="move-btn right"
+                data-key="arrowright"
+            >
+                ▶
+            </button>
+
+        </div>
+
+
+        <!-- AUTO FIRE INDICATOR -->
+
+        <div class="auto-fire">
+            <span class="fire-dot"></span>
+            AUTO FIRE
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         MESSAGE
+    =============================== -->
+
+    <div
+        id="message"
+        class="message hidden"
+    ></div>
+
+
+    <!-- ==============================
+         GAME OVER
+    =============================== -->
+
+    <div
+        id="gameOver"
+        class="result-screen hidden"
+    >
+
+        <div class="result-box">
+
+            <div class="result-title danger">
+                SYSTEM FAILURE
+            </div>
+
+            <div class="result-score">
+                SCORE
+                <strong id="finalScore">
+                    0
+                </strong>
+            </div>
+
+            <button
+                class="restart-button"
+                onclick="location.reload()"
+            >
+                ↻ CHƠI LẠI
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         VICTORY
+    =============================== -->
+
+    <div
+        id="victory"
+        class="result-screen hidden"
+    >
+
+        <div class="result-box victory-box">
+
+            <div class="result-title">
+                ★ VICTORY ★
+            </div>
+
+            <div class="victory-text">
+                CYBERARENA CLEARED
+            </div>
+
+            <div class="result-score">
+                FINAL SCORE
+                <strong id="victoryScore">
+                    0
+                </strong>
+            </div>
+
+            <button
+                class="restart-button"
+                onclick="location.reload()"
+            >
+                ↻ CHƠI LẠI
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
